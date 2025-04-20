@@ -14,7 +14,7 @@ const SequelizeConfig = SequelizeModule.forRootAsync({
     username: configService.getOrThrow('POSTGRES_USER'),
     password: configService.getOrThrow('POSTGRESS_PASSWORD'),
     database: configService.getOrThrow('POSTGRES_DB'),
-    models: [User],
+    // models: [User],
     autoLoadModels: true,
     synchronize: true
   }),
