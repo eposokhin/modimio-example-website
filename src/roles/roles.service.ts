@@ -11,7 +11,7 @@ export class RolesService {
     return await this.roleRepository.create(createRoleDto)
   }
 
-  async findOne(value: string) {
+  async findOneByValue(value: string) {
     return await this.roleRepository.findOne({where: {value}})
   }
 }

@@ -6,6 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "create-role": "ts-node -r tsconfig-paths/register src/scripts/create-role.cli.ts",
+    "add-role": "ts-node -r tsconfig-paths/register src/scripts/add-role.cli.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -27,6 +29,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/sequelize": "^11.0.0",
     "@nestjs/typeorm": "^11.0.0",
+    "commander": "^13.1.0",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
     "reflect-metadata": "^0.2.2",
