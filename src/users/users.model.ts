@@ -29,6 +29,12 @@ export class User extends Model<User, UserCreationAttrs> {
         allowNull: false
     })
     hash: string
+
+    @Column({
+        type: DataType.BOOLEAN,
+        defaultValue: false
+    })
+    verified: boolean
     
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[]
