@@ -4,7 +4,6 @@ import { RolesModule } from './roles/roles.module';
 import { AuthModule } from './auth/auth.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './users/users.model';
 
 const SequelizeConfig = SequelizeModule.forRootAsync({
   useFactory: (configService: ConfigService) => ({
@@ -14,7 +13,6 @@ const SequelizeConfig = SequelizeModule.forRootAsync({
     username: configService.getOrThrow('POSTGRES_USER'),
     password: configService.getOrThrow('POSTGRESS_PASSWORD'),
     database: configService.getOrThrow('POSTGRES_DB'),
-    // models: [User],
     autoLoadModels: true,
     synchronize: true
   }),
