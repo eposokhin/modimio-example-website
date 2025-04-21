@@ -1,8 +1,7 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './users.model';
-import { UserRoles } from 'src/roles/models/user-roles.model';
 import { AddRoleDto } from './dto/add-role.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { Op } from 'sequelize';
@@ -25,20 +24,19 @@ export class UsersService {
     throw new InternalServerErrorException()
   }
 
-  async findAll() {
-    return await this.userRepository.findAll({ include: { all: true } })
+  async findAll(page: number, usersPerPage: number) {
+    const offset = (page - 1) * usersPerPage
+    const limit = usersPerPage
+    return await this.userRepository.findAll({
+      include: { all: true },
+      limit,
+      offset
+    })
   }
 
   async findOne(createUserDto: CreateUserDto) {
     const { email, login } = createUserDto
     const user = await this.userRepository.findOne({
-      include: [
-        {
-          model: Role,
-          attributes: ['value'],
-          through: { attributes: [] }
-        },
-      ],
       where: {
         [Op.or]: [
           { email },
@@ -55,7 +53,7 @@ export class UsersService {
       include: [
         {
           model: Role,
-          attributes: ['value'], 
+          attributes: ['value'],
           through: {
             attributes: [],
           },
