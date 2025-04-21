@@ -22,6 +22,6 @@ const SequelizeConfig = SequelizeModule.forRootAsync({
 @Module({
   imports: [UsersModule, AuthModule, RolesModule, SequelizeConfig, ConfigModule.forRoot({ isGlobal: true })],
   controllers: [],
-  providers: [],
+  providers: []
 })
 export class AppModule {}

@@ -55,4 +55,8 @@ export class AuthService {
     throw new UnauthorizedException('Неверный логин, email или пароль')
 
   }
+
+  async getUserRolesById(id: number) {
+    return await this.userService.getUserRolesById(id)
+  }
 }

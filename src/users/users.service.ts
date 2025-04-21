@@ -2,19 +2,21 @@ import { BadRequestException, Injectable, InternalServerErrorException, UseGuard
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './users.model';
+import { UserRoles } from 'src/roles/models/user-roles.model';
 import { AddRoleDto } from './dto/add-role.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { Op } from 'sequelize';
+import { Role } from 'src/roles/models/roles.model';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private userRepository: typeof User,
     private rolesService: RolesService
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepository.create({...createUserDto, hash: createUserDto.password})
+    const user = await this.userRepository.create({ ...createUserDto, hash: createUserDto.password })
     const role = await this.rolesService.findOneByValue('USER')
     if (role) {
       await user.$set('roles', [role.id])
@@ -22,25 +24,48 @@ export class UsersService {
     }
     throw new InternalServerErrorException()
   }
-  
+
   async findAll() {
-    return await this.userRepository.findAll({include: {all: true}})
+    return await this.userRepository.findAll({ include: { all: true } })
   }
 
   async findOne(createUserDto: CreateUserDto) {
-    const {email, login} = createUserDto
-    const user = await this.userRepository.findOne({where: {
-      [Op.or]: [
-        {email},
-        {login}
-      ]
-    }})
+    const { email, login } = createUserDto
+    const user = await this.userRepository.findOne({
+      include: [
+        {
+          model: Role,
+          attributes: ['value'],
+          through: { attributes: [] }
+        },
+      ],
+      where: {
+        [Op.or]: [
+          { email },
+          { login }
+        ]
+      }
+    })
 
     return user
   }
 
+  async getUserRolesById(id: number) {
+    return await this.userRepository.findByPk(id, {
+      include: [
+        {
+          model: Role,
+          attributes: ['value'], 
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    })
+  }
+
   async addRole(addRoleDto: AddRoleDto) {
-    const user = await this.userRepository.findOne({where: {email: addRoleDto.email}});
+    const user = await this.userRepository.findOne({ where: { email: addRoleDto.email } });
     const role = await this.rolesService.findOneByValue(addRoleDto.roleValue);
     if (role && user) {
       await user.$add('role', role.id);
