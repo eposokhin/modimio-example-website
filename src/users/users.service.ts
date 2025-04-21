@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './users.model';
 import { AddRoleDto } from './dto/add-role.dto';
 import { RolesService } from 'src/roles/roles.service';
+import { Op } from 'sequelize';
 
 
 @Injectable()
@@ -25,6 +26,18 @@ export class UsersService {
 
   async findAll() {
     return await this.userRepository.findAll({include: {all: true}})
+  }
+
+  async findOne(createUserDto: CreateUserDto) {
+    const {email, login} = createUserDto
+    const user = await this.userRepository.findOne({where: {
+      [Op.or]: [
+        {email},
+        {login}
+      ]
+    }})
+
+    return user
   }
 
   async addRole(addRoleDto: AddRoleDto) {
